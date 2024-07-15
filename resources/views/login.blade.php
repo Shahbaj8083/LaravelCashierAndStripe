@@ -62,7 +62,9 @@
                         </form>
                     </div>
                     <div class="section-title">
-                        <p>Register</p>
+                        <p>
+                            <a href="{{ URL::to('/register') }}" class="btn btn-primary">Register</a>
+                        </p>
                     </div>
                 </div>
             </div>
