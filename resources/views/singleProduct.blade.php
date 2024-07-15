@@ -18,25 +18,29 @@
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">
-                                <div class="product__thumb__pic set-bg" data-setbg="img/shop-details/thumb-1.png">
+                                <div class="product__thumb__pic set-bg"
+                                    data-setbg="{{ URL::asset('uploads/products/' . $product->picture) }}">
                                 </div>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">
-                                <div class="product__thumb__pic set-bg" data-setbg="img/shop-details/thumb-2.png">
+                                <div class="product__thumb__pic set-bg"
+                                    data-setbg="{{ URL::asset('uploads/products/' . $product->picture) }}">
                                 </div>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">
-                                <div class="product__thumb__pic set-bg" data-setbg="img/shop-details/thumb-3.png">
+                                <div class="product__thumb__pic set-bg"
+                                    data-setbg="{{ URL::asset('uploads/products/' . $product->picture) }}">
                                 </div>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-4" role="tab">
-                                <div class="product__thumb__pic set-bg" data-setbg="img/shop-details/thumb-4.png">
+                                <div class="product__thumb__pic set-bg"
+                                    data-setbg="{{ URL::asset('uploads/products/' . $product->picture) }}">
                                     <i class="fa fa-play"></i>
                                 </div>
                             </a>
@@ -47,23 +51,24 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="tabs-1" role="tabpanel">
                             <div class="product__details__pic__item">
-                                <img src="img/shop-details/product-big-2.png" alt="">
+                                <img src="{{ URL::asset('uploads/products/' . $product->picture) }}" alt="">
                             </div>
                         </div>
                         <div class="tab-pane" id="tabs-2" role="tabpanel">
                             <div class="product__details__pic__item">
-                                <img src="img/shop-details/product-big-3.png" alt="">
+                                <img src="{{ URL::asset('uploads/products/' . $product->picture) }}" alt="">
                             </div>
                         </div>
                         <div class="tab-pane" id="tabs-3" role="tabpanel">
                             <div class="product__details__pic__item">
-                                <img src="img/shop-details/product-big.png" alt="">
+                                <img src="{{ URL::asset('uploads/products/' . $product->picture) }}" alt="">
                             </div>
                         </div>
                         <div class="tab-pane" id="tabs-4" role="tabpanel">
                             <div class="product__details__pic__item">
-                                <img src="img/shop-details/product-big-4.png" alt="">
-                                <a href="https://www.youtube.com/watch?v=8PJ3_p7VqHw&list=RD8PJ3_p7VqHw&start_radio=1" class="video-popup"><i class="fa fa-play"></i></a>
+                                <img src="{{ URL::asset('uploads/products/' . $product->picture) }}" alt="">
+                                <a href="https://www.youtube.com/watch?v=8PJ3_p7VqHw&list=RD8PJ3_p7VqHw&start_radio=1"
+                                    class="video-popup"><i class="fa fa-play"></i></a>
                             </div>
                         </div>
                     </div>
@@ -76,7 +81,7 @@
             <div class="row d-flex justify-content-center">
                 <div class="col-lg-8">
                     <div class="product__details__text">
-                        <h4>Hooded thermal anorak</h4>
+                        <h4>{{ $product->title }}</h4>
                         <div class="rating">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
@@ -85,10 +90,8 @@
                             <i class="fa fa-star-o"></i>
                             <span> - 5 Reviews</span>
                         </div>
-                        <h3>$270.00 <span>70.00</span></h3>
-                        <p>Coat with quilted lining and an adjustable hood. Featuring long sleeves with adjustable
-                            cuff tabs, adjustable asymmetric hem with elastic side tabs and a front zip fastening
-                            with placket.</p>
+                        <h3>${{ $product->price }}.00</h3>
+                        <p>{{ $product->description }}</p>
                         <div class="product__details__option">
                             <div class="product__details__option__size">
                                 <span>Size:</span>
@@ -153,7 +156,8 @@
                     <div class="product__details__tab">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#tabs-5" role="tab">Description</a>
+                                <a class="nav-link active" data-toggle="tab" href="#tabs-5"
+                                    role="tab">Description</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">Customer
@@ -287,7 +291,8 @@
                         <span class="label">New</span>
                         <ul class="product__hover">
                             <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                            <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a></li>
+                            <li><a href="#"><img src="img/icon/compare.png" alt="">
+                                    <span>Compare</span></a></li>
                             <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
                         </ul>
                     </div>
@@ -321,7 +326,8 @@
                     <div class="product__item__pic set-bg" data-setbg="img/product/product-2.jpg">
                         <ul class="product__hover">
                             <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                            <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a></li>
+                            <li><a href="#"><img src="img/icon/compare.png" alt="">
+                                    <span>Compare</span></a></li>
                             <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
                         </ul>
                     </div>
@@ -356,7 +362,8 @@
                         <span class="label">Sale</span>
                         <ul class="product__hover">
                             <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                            <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a></li>
+                            <li><a href="#"><img src="img/icon/compare.png" alt="">
+                                    <span>Compare</span></a></li>
                             <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
                         </ul>
                     </div>
@@ -390,7 +397,8 @@
                     <div class="product__item__pic set-bg" data-setbg="img/product/product-4.jpg">
                         <ul class="product__hover">
                             <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                            <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a></li>
+                            <li><a href="#"><img src="img/icon/compare.png" alt="">
+                                    <span>Compare</span></a></li>
                             <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
                         </ul>
                     </div>

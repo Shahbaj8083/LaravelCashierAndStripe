@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,20 @@ class ClientController extends Controller
 {
     public function index()
     {
-        return view('index');
+        $allProducts = Product::all();
+        $newArrival = Product::where('type', 'new-arrivals')->get();
+        $hotSale = Product::where('type', 'sale')->get();
+        /*
+        compact('allProducts', 'newArrival', 'hotSale') is a PHP function that creates an array
+        where each variable name passed to compact() becomes a key in the array,
+        and its corresponding variable value is used as the value.
+
+        The view() function accepts a view name ('index') as its first argument and
+        an optional second argument of an array or compacted variables. In this case,
+        it passes three variables ($allProducts, $newArrival, and $hotSale) to the 'index' view.
+        These variables can then be accessed within the 'index.blade.php'
+         */
+        return view('index', compact('allProducts', 'newArrival', 'hotSale'));
     }
     public function cart()
     {
@@ -24,9 +38,10 @@ class ClientController extends Controller
     {
         return view('shop');
     }
-    public function singleProduct()
+    public function singleProduct($id)
     {
-        return view('singleProduct');
+        $product = Product::find($id); #find the exact product
+        return view('singleProduct', compact('product'));
     }
     public function register()
     {
@@ -36,10 +51,32 @@ class ClientController extends Controller
     {
         return view('login');
     }
-    public function logout()
+    public function logout(Request $request)
     {
+        #Log out the user
         Auth::logout();
-        return view('login');
+
+        #Invalidate the session
+        /*
+        This step invalidates the current session data associated with the user.
+        It ensures that any existing session data is no longer considered valid after logout.
+
+        Invalidating the session ensures that any stored session data is no longer usable after logout.
+         */
+        $request->session()->invalidate();
+
+        #Regenerate the session token
+        /*
+         Regenerating the session token is crucial for preventing session fixation attacks.
+        This process generates a new CSRF token and updates the session ID, 
+        making it difficult for attackers to hijack a session.
+
+        Regenerating the session token helps protect against session fixation attacks,
+        here an attacker tries to reuse a valid session ID to impersonate a user.
+         */
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
     }
 
     public function registerUser(Request $request)
