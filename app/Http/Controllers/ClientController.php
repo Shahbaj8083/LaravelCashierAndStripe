@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
@@ -28,29 +32,73 @@ class ClientController extends Controller
     }
     public function cart()
     {
-        return view('cart');
+        $cartItem = DB::table('products')
+            ->join('carts', 'carts.product_id', '=', 'products.id')
+            ->select('products.title', 'products.price', 'products.quantity as pQuantity', 'products.picture', 'carts.*')
+            ->where('carts.customer_id', auth()->user()->id)
+            ->get();
+        return view('cart', compact('cartItem'));
     }
-    public function checkout()
+
+    public function checkout(Request $request)
     {
-        return view('checkout');
+        try {
+            $order = new Order();
+            $order->status = "pending"; // Initial status is pending
+            $order->customer_id = auth()->user()->id;
+            $order->bill = $request->input('bill');
+            $order->name = $request->input('name');
+            $order->phone = $request->input('phone');
+            $order->address = $request->input('address');
+
+            if ($order->save()) {
+                $cartItemsRelatedToUser = Cart::where('customer_id', auth()->user()->id)->get();
+
+                foreach ($cartItemsRelatedToUser as $item) {
+                    // Lazy loading
+                    $product = Product::find($item->product_id);
+
+                    $orderItem = new OrderItem();
+                    $orderItem->product_id = $item->product_id;
+                    $orderItem->quantity = $item->quantity;
+                    $orderItem->order_id = $order->id;
+                    $orderItem->price = $product->price;
+                    $orderItem->save();
+
+                    // Remove the cart item after checkout
+                    $item->delete();
+                }
+            }
+
+            return redirect('/cart')->with('success', 'Your order has been placed successfully!');
+        } catch (\Exception $e) {
+            // Log the error or handle it as needed
+            return redirect('/cart')->with('error', 'An error occurred while processing your order: ' . $e->getMessage());
+        }
     }
+
+
     public function shop()
     {
         return view('shop');
     }
+
     public function singleProduct($id)
     {
         $product = Product::find($id); #find the exact product
         return view('singleProduct', compact('product'));
     }
+
     public function register()
     {
         return view('register');
     }
+
     public function login()
     {
         return view('login');
     }
+
     public function logout(Request $request)
     {
         #Log out the user
@@ -116,6 +164,51 @@ class ClientController extends Controller
         } else {
             #Authentication failed flash an error message
             return redirect('login')->with('error', 'Username/password is incorrect');
+        }
+    }
+
+    public function addToCart(Request $request)
+    {
+        $customerId = auth()->user()->id;
+        $productId = $request->input('id');
+        $quantity = $request->input('quantity');
+
+        #Check if the cart item already exists
+        $cartItem = Cart::where('product_id', $productId)
+            ->where('customer_id', $customerId)
+            ->first();
+
+        if ($cartItem) {
+            #If the cart item exists, increment the quantity
+            $cartItem->quantity += $quantity;
+            $cartItem->save();
+        } else {
+            #If the cart item does not exist, create a new one
+            $cartItem = new Cart();
+            $cartItem->product_id = $productId;
+            $cartItem->quantity = $quantity;
+            $cartItem->customer_id = $customerId;
+            $cartItem->save();
+        }
+        return redirect('/dashboard')->with('success', 'Item added to the cart');
+    }
+
+    public function updateCart(Request $request)
+    {
+        $cartItem = Cart::find($request->input('id'));
+        if ($cartItem) {
+            $cartItem->quantity = $request->input('quantity');
+            $cartItem->save();
+            return redirect('/cart');
+        }
+    }
+
+    public function deleteCartItem($id)
+    {
+        $cartItem = Cart::find($id);
+        // $cartItem->delete();
+        if ($cartItem->delete()) {
+            return redirect('/cart');
         }
     }
 }

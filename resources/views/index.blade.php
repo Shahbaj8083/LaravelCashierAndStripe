@@ -123,7 +123,7 @@
                         </div>
                         <div class="product__item__text">
                             <h6>{{ $item->title }}</h6>
-                            <a href="#" class="add-cart">+ Add To Cart</a>
+                            <a href="{{ URL::to('single/' . $item->id) }}" class="add-cart">+ Add To Cart</a>
                             <div class="rating">
                                 <i class="fa fa-star-o"></i>
                                 <i class="fa fa-star-o"></i>
