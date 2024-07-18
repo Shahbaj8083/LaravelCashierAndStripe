@@ -98,8 +98,8 @@
                         <li>Subtotal <span>$ {{ $total }}</span></li>
                         <li>Total <span>$ {{ $total }}</span></li>
                     </ul>
-                    <form action="{{ URL::to('/checkout') }}" method="POST">
-                        @csrf
+                    <form action="{{ URL::to('/stripe') }}">
+                        {{-- @csrf --}}
                         <input type="text" name="name" class="form-control mt-2" placeholder="Enter name"
                             required>
                         <input type="text" name="phone" class="form-control mt-2" placeholder="Enter phone number"

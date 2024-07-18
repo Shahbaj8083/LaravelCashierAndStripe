@@ -99,6 +99,11 @@ class ClientController extends Controller
         return view('login');
     }
 
+    public function createPlan()
+    {
+        return view('plans.create');
+    }
+
     public function logout(Request $request)
     {
         #Log out the user
