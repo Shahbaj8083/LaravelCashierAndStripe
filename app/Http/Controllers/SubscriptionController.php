@@ -7,19 +7,19 @@ use Exception;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Subscription;
 use Stripe\Plan;
+use Stripe;
+
 
 class SubscriptionController extends Controller
 {
     public function showPlanForm()
     {
-        return view('stripe.plans.create');
+        return view('plans.createPlan');
     }
     public function savePlan(Request $request)
     {
-        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
-
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         $amount = ($request->amount * 100);
-
         try {
             $plan = Plan::create([
                 'amount' => $amount,
@@ -30,6 +30,7 @@ class SubscriptionController extends Controller
                     'name' => $request->name
                 ]
             ]);
+
 
             ModelsPlan::create([
                 'plan_id' => $plan->id,
@@ -50,22 +51,37 @@ class SubscriptionController extends Controller
         $basic = ModelsPlan::where('name', 'basic')->first();
         $professional = ModelsPlan::where('name', 'professional')->first();
         $enterprise = ModelsPlan::where('name', 'enterprise')->first();
-        return view('stripe.plans', compact('basic', 'professional', 'enterprise'));
+        return view('plans', compact('basic', 'professional', 'enterprise'));
     }
+
+
     public function checkout($planId)
     {
         $plan = ModelsPlan::where('plan_id', $planId)->first();
+
         if (!$plan) {
             return back()->withErrors([
                 'message' => 'Unable to locate the plan'
             ]);
         }
 
-        return view('stripe.plans.checkout', [
+        $user = auth()->user();
+        if (!$user) {
+            return back()->withErrors([
+                'message' => 'You must be logged in to proceed'
+            ]);
+        }
+
+        # Create a setup intent for the authenticated user
+        $intent = $user->createSetupIntent();
+
+        # Return the checkout view with the plan and setup intent
+        return view('plans.checkout', [
             'plan' => $plan,
-            'intent' => auth()->user()->createSetupIntent(),
+            'intent' => $intent,
         ]);
     }
+
     public function processPlan(Request $request)
     {
         $user = auth()->user();
@@ -90,31 +106,5 @@ class SubscriptionController extends Controller
 
         $request->session()->flash('alert-success', 'You are subscribed to this plan');
         return to_route('plans.checkout', $plan);
-    }
-    public function allSubscriptions()
-    {
-        if (auth()->user()->onTrial('default')) {
-            dd('trial');
-        }
-        $subscriptions = Subscription::where('user_id', auth()->id())->get();
-        return view('stripe.subscriptions.index', compact('subscriptions'));
-    }
-    public function cancelSubscriptions(Request $request)
-    {
-        $subscriptionName = $request->subscriptionName;
-        if ($subscriptionName) {
-            $user = auth()->user();
-            $user->subscription($subscriptionName)->cancel();
-            return 'subsc is canceled';
-        }
-    }
-    public function resumeSubscriptions(Request $request)
-    {
-        $user = auth()->user();
-        $subscriptionName = $request->subscriptionName;
-        if ($subscriptionName) {
-            $user->subscription($subscriptionName)->resume();
-            return 'subsc is resumed';
-        }
     }
 }

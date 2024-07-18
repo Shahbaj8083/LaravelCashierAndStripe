@@ -45,7 +45,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // Automatically hash password before saving the model
+    # Automatically hash password before saving the model
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);

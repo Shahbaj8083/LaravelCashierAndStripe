@@ -18,16 +18,6 @@ class ClientController extends Controller
         $allProducts = Product::all();
         $newArrival = Product::where('type', 'new-arrivals')->get();
         $hotSale = Product::where('type', 'sale')->get();
-        /*
-        compact('allProducts', 'newArrival', 'hotSale') is a PHP function that creates an array
-        where each variable name passed to compact() becomes a key in the array,
-        and its corresponding variable value is used as the value.
-
-        The view() function accepts a view name ('index') as its first argument and
-        an optional second argument of an array or compacted variables. In this case,
-        it passes three variables ($allProducts, $newArrival, and $hotSale) to the 'index' view.
-        These variables can then be accessed within the 'index.blade.php'
-         */
         return view('index', compact('allProducts', 'newArrival', 'hotSale'));
     }
     public function cart()
@@ -97,11 +87,6 @@ class ClientController extends Controller
     public function login()
     {
         return view('login');
-    }
-
-    public function createPlan()
-    {
-        return view('plans.create');
     }
 
     public function logout(Request $request)
@@ -211,7 +196,6 @@ class ClientController extends Controller
     public function deleteCartItem($id)
     {
         $cartItem = Cart::find($id);
-        // $cartItem->delete();
         if ($cartItem->delete()) {
             return redirect('/cart');
         }

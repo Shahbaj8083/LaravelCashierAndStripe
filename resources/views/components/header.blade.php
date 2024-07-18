@@ -46,17 +46,10 @@
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <!-- <li class="active"><a href="./index.html">Home</a></li> -->
                             <li class="active"><a href="{{ URL::to('/dashboard') }}">Home</a></li>
-                            <li><a href="{{ URL::to('/shop') }}">Shop</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <!-- <li><a href="./about.html">Aboutr Us</a></li> -->
-                                    <!-- <li><a href="./shop-details.html">Shopr Details</a></li> -->
-                                    <li><a href="{{ URL::to('/cart') }}">Shopping Cart</a></li>
-                                    <li><a href="{{ URL::to('/checkout') }}">Check Out</a></li>
-                                    <!-- <li><a href="./blog-details.html">Blogr Details</a></li> -->
-                                </ul>
+                            <li><a href="{{ URL::to('/cart') }}">Shopping Cart</a></li>
+                            <li><a href="{{ URL::to('/plans') }}">Plan</a>
+
                             </li>
                             @if (!auth()->check())
                                 @php
@@ -69,13 +62,10 @@
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
-                        {{-- <a href="#" class="search-switch"><img src="{{URL::asset('img/icon/search.png')}}" alt=""></a> --}}
-
                         <a href="#"><img src="{{ URL::asset('img/icon/heart.png') }}" alt=""></a>
                         <a href="#"><img src="{{ URL::asset('img/icon/cart.png') }}" alt="">
                             <span>0</span></a>
                         <a href="{{ URL::to('/logout') }}" style="color: #2b80db; text-decoration: none;">Logout</a>
-                        {{-- <div class="price">$0.00</div> --}}
                     </div>
                 </div>
             </div>
