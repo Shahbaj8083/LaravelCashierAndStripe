@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,31 +17,35 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
+# Public routes
 Route::get('/', [ClientController::class, 'login']);
-// Route::get('/', [ClientController::class, 'index']);
-Route::get('/dashboard', [ClientController::class, 'index']);
-Route::get('/shop', [ClientController::class, 'shop']);
-Route::get('/cart', [ClientController::class, 'cart']);
-Route::get('/single/{id}', [ClientController::class, 'singleProduct']);
-Route::post('/checkout', [ClientController::class, 'checkout']);
 Route::get('/register', [ClientController::class, 'register']);
-Route::get('/login', [ClientController::class, 'login']);
-Route::get('/logout', [ClientController::class, 'logout']);
+Route::get('/login', [ClientController::class, 'login'])->name('login');
 Route::post('/registerUser', [ClientController::class, 'registerUser']);
 Route::post('/loginUser', [ClientController::class, 'loginUser']);
-Route::post('/addToCart', [ClientController::class, 'addToCart']);
-Route::get('/deleteCartItem/{id}', [ClientController::class, 'deleteCartItem']);
-Route::post('/updateCart', [ClientController::class, 'updateCart']);
-Route::get('/plans/create', [ClientController::class, 'createPlan']);
-Route::post('/plans/store', [SubscriptionController::class, 'savePlan'])->name('plans.store');
 
+# Protected routes
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [ClientController::class, 'index']);
+    Route::get('/cart', [ClientController::class, 'cart']);
+    Route::get('/single/{id}', [ClientController::class, 'singleProduct']);
+    Route::post('/checkout', [ClientController::class, 'checkout']);
+    Route::get('/logout', [ClientController::class, 'logout']);
+    Route::post('/addToCart', [ClientController::class, 'addToCart']);
+    Route::get('/deleteCartItem/{id}', [ClientController::class, 'deleteCartItem']);
+    Route::post('/updateCart', [ClientController::class, 'updateCart']);
 
-Route::controller(StripePaymentController::class)->group(function () {
-    Route::get('stripe', 'stripe');
-    Route::post('stripe', 'stripePost')->name('stripe.post');
-    Route::post('/create-invoice')->name('create.invoice');
+    Route::post('/plans/store', [SubscriptionController::class, 'savePlan'])->name('plans.store');
+    Route::get('plans/create', [SubscriptionController::class, 'showPlanForm'])->name('plans.create');
+    Route::get('/plans', [SubscriptionController::class, 'allPlans'])->name('plans.all');
+    Route::get('plans/checkout/{planId}', [SubscriptionController::class, 'checkout'])->name('plans.checkout');
+    Route::post('plans/process', [SubscriptionController::class, 'processPlan'])->name('plan.process');
+    Route::get('subscriptions/all', [SubscriptionController::class, 'allSubscriptions'])->name('subscriptions.all');
+    Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
+
+    Route::controller(StripePaymentController::class)->group(function () {
+        Route::get('stripe', 'stripe');
+        Route::post('stripe', 'stripePost')->name('stripe.post');
+        Route::post('/create-invoice')->name('create.invoice');
+    });
 });

@@ -37,23 +37,7 @@ class StripePaymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function singleCharge(Request $request)
-    // {
-    //     $amount = $request->amount;
-    //     $amount = $amount * 100;
-    //     $paymentMethod = $request->payment_method;
 
-    //     $user = auth()->user();
-    //     $user->createOrGetStripeCustomer();
-
-    //     if ($paymentMethod != null) {
-    //         $paymentMethod = $user->addPaymentMethod($paymentMethod);
-    //     }
-
-    //     $user->charge($amount, $paymentMethod);
-
-    //     return to_route('home');
-    // }
     public function stripePost(Request $request)
     {
         try {
@@ -72,7 +56,7 @@ class StripePaymentController extends Controller
             if ($charge->status === 'succeeded') {
                 // Create an order
                 $order = new Order();
-                $order->status = "paid"; // Initial status is paid
+                $order->status = "paid";
                 $order->customer_id = auth()->user()->id;
                 $order->bill = $request->input('bill');
                 $order->name = $request->input('name');
@@ -123,23 +107,18 @@ class StripePaymentController extends Controller
             // Set Stripe API key from environment
             Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
-            // Example: Create an invoice item (optional)
-            $customerId = $request->user()->stripe_id; // Replace with actual Stripe customer ID
+            $customerId = $request->user()->stripe_id;
             InvoiceItem::create([
                 'customer' => $customerId,
-                'amount' => $request->input('bill') * 100, // Amount in cents
+                'amount' => $request->input('bill') * 100,
                 'currency' => 'usd',
                 'description' => 'One-time fee for service',
             ]);
 
-            // Example: Create an invoice (optional)
             Invoice::create([
                 'customer' => $customerId,
             ]);
-
-            // Handle invoice creation and other logic here
         } catch (\Exception $e) {
-            // Log the error or handle it as needed
             Log::error('Error creating invoice: ' . $e->getMessage());
         }
     }
