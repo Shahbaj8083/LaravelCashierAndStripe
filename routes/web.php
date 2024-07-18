@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,3 +35,12 @@ Route::post('/loginUser', [ClientController::class, 'loginUser']);
 Route::post('/addToCart', [ClientController::class, 'addToCart']);
 Route::get('/deleteCartItem/{id}', [ClientController::class, 'deleteCartItem']);
 Route::post('/updateCart', [ClientController::class, 'updateCart']);
+Route::get('/plans/create', [ClientController::class, 'createPlan']);
+Route::post('/plans/store', [SubscriptionController::class, 'savePlan'])->name('plans.store');
+
+
+Route::controller(StripePaymentController::class)->group(function () {
+    Route::get('stripe', 'stripe');
+    Route::post('stripe', 'stripePost')->name('stripe.post');
+    Route::post('/create-invoice')->name('create.invoice');
+});
